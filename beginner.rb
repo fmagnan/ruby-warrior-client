@@ -1,42 +1,39 @@
 class Player
   
-  def restore warrior
-    if warrior.feel(:forward).enemy?
-      warrior.walk! :backward
-    elsif warrior.feel(:backward).enemy?
-      warrior.walk! :forward
+  def opposite(direction)
+    if direction == :backward
+      opposite = :forward
     else
-      warrior.rest! 
-    end
-  end
-  
-  def fight_archer warrior
-    if warrior.feel(:forward).enemy?
-      warrior.attack! :forward
-    elsif warrior.feel(:backward).enemy?
-      warrior.attack! :backward
-    else
-      warrior.walk! :backward
+      opposite = :backward
     end
   end
 
-  def free_prisoner warrior
-    if warrior.feel(:forward).captive?
-      warrior.rescue! :forward
-    elsif warrior.feel(:backward).captive?
-      warrior.rescue! :backward
+  def restore(warrior, direction) 
+    if warrior.feel(direction).enemy?
+      warrior.walk!(opposite(direction))
+    else
+      warrior.rest!
+    end
+  end
+  
+  def fight!(warrior, direction)
+    if warrior.feel(direction).enemy?
+      warrior.attack! direction
+    else
+      warrior.walk! direction
     end
   end
 
   def play_turn(warrior)
     currentHealth = warrior.health
+    direction = :forward
 
-    free_prisoner warrior
-
-    if currentHealth < 18
-      restore warrior
-    else
-      fight_archer warrior
+    if warrior.feel(direction).captive?
+      warrior.rescue!(direction)
+    elsif currentHealth < 17 or currentHealth == 20
+      fight!(warrior, direction)
+    elsif currentHealth < 20
+      restore(warrior, direction)
     end
   end
 
