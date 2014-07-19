@@ -30,9 +30,11 @@ class Player
 
     if warrior.feel(direction).captive?
       warrior.rescue!(direction)
+    elsif warrior.feel(:forward).wall?
+      warrior.pivot! :backward
     elsif currentHealth < 17 or currentHealth == 20
       fight!(warrior, direction)
-    elsif currentHealth < 20
+    else
       restore(warrior, direction)
     end
   end
